@@ -146,7 +146,7 @@ class TTBConverter:
     self.MAX_LINE_LEN = 45
 
 
-  def translate(self, _text: str):
+  def translate(self, _text: str, _fancy = True):
     lines: list[str] = []
 
     for i, c in enumerate(_text):
@@ -163,10 +163,13 @@ class TTBConverter:
         exts = ''.join(['+' if extc > 0 else '-' for _ in range(0, extc, 1 if extc > 0 else -1)])
         line = f"{'>' if i < 1 else ">>"}{itrs}[<{incs}>-]<{exts}."
 
-        # Calculating spaces needed to make all the `=`s line up in the final code.
-        spaces = ''.join([' ' for _ in range(0, (self.MAX_LINE_LEN - len(cc)) - len(line))])
+        if _fancy:
+          # Calculating spaces needed to make all the `=`s line up in the final code.
+          spaces = ''.join([' ' for _ in range(0, (self.MAX_LINE_LEN - len(cc)) - len(line))])
+          lines.append(f"{line}{spaces} {cc} = {value}")
 
-        lines.append(f"{line}{spaces} {cc} = {value}")
+        else:
+          lines.append(f"{line}")
 
       except KeyError: raise Exception(f"unknown character: '{c}' ({ord(c)}).")
-    return '\n'.join(lines)
+    return '%s'.join(lines) %'\n' if _fancy else ''
