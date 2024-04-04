@@ -1,3 +1,6 @@
+from occurrences import Occurrence
+
+
 class TTBConverter:
   """ Text To Brainfuck Converter. """
 
@@ -145,12 +148,28 @@ class TTBConverter:
 
     self.MAX_LINE_LEN = 45
 
+  # Would've used tuples but they're immutable after being set.
+  def parse(self, _text: str) -> list[Occurrence]:
+    """ Produces a list of `Occurrences`, or a list of chars along with how many times in a row they occur. """
 
-  def translate(self, _text: str, _fancy = True):
+    occurences: list[Occurrence] = []
+
+    for c in _text:
+      if len(occurences) > 0:
+        last = occurences[len(occurences)-1]
+        if c == last.char:
+          last.count += 1
+          continue
+      occurences.append(Occurrence(c))
+
+    return occurences
+
+  def translate(self, _text: list[Occurrence], _fancy = True):
     lines: list[str] = []
 
-    for i, c in enumerate(_text):
+    for i, o in enumerate(_text):
       try:
+        c, oc = o.char, o.count
         cc = self.renamed_chars[c] if c in self.renamed_chars else c
 
         # Iteration count, increment count, extra count
@@ -161,7 +180,7 @@ class TTBConverter:
         itrs = ''.join(['+' for _ in range(0, itrc)])
         incs = ''.join(['+' for _ in range(0, incc)])
         exts = ''.join(['+' if extc > 0 else '-' for _ in range(0, extc, 1 if extc > 0 else -1)])
-        line = f"{'>' if i < 1 else ">>"}{itrs}[<{incs}>-]<{exts}."
+        line = f"{'>' if i < 1 else ">>"}{itrs}[<{incs}>-]<{exts}{''.join(['.' for _ in range(oc)])}"
 
         if _fancy:
           # Calculating spaces needed to make all the `=`s line up in the final code.

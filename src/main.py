@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
             continue  # Continue after every command so we don't translate `!<cmd>`.
 
-          print(converter.translate(text))
+          print(converter.translate(converter.parse(text)))
       except KeyboardInterrupt: print("Exited via keyboard interrupt.\n")
 
     case ConversionMethod.BY_FILE:
@@ -55,7 +55,7 @@ if __name__ == "__main__":
       # Open given file and translate it, storing the translation for later.
       with open(path, 'r') as file:
         content = file.read()
-        translated_content = converter.translate(content)
+        translated_content = converter.translate(converter.parse(content))
         file.close()
 
       # Get file path without extension at the end.
