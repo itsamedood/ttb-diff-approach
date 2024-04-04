@@ -34,9 +34,9 @@ class TTBConverter:
       '*': (6, 7, 0),     # 42
       '+': (6, 7, 1),     # 43
       ',': (4, 11, 0),    # 44
-      '-': (5, 12, 0),    # 45
-      '.': (5, 12, 1),    # 46
-      '/': (5, 12, 2),    # 47
+      '-': (5, 9, 0),     # 45
+      '.': (5, 9, 1),     # 46
+      '/': (5, 9, 2),     # 47
 
       # Numbers #
       '0': (7, 7, -1),    # 48
@@ -172,4 +172,4 @@ class TTBConverter:
           lines.append(f"{line}")
 
       except KeyError: raise Exception(f"unknown character: '{c}' ({ord(c)}).")
-    return '%s'.join(lines) %'\n' if _fancy else ''
+    return f"{'\n' if _fancy else ''}".join(lines)

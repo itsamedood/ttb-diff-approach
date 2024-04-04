@@ -1,0 +1,6 @@
+DISTPATH="bin"
+EXEC="ttbda"
+MAIN="src/main.py"
+
+[compile]
+pyinstaller --onefile --distpath $DISTPATH --name $EXEC $MAIN
