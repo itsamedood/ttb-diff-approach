@@ -150,7 +150,7 @@ class TTBConverter:
 
   # Would've used tuples but they're immutable after being set.
   def parse(self, _text: str) -> list[Occurrence]:
-    """ Produces a list of `Occurrences`, or a list of chars along with how many times in a row they occur. """
+    """ Produces a list of `Occurrence`s, or a list of chars along with how many times in a row they occur. """
 
     occurences: list[Occurrence] = []
 
