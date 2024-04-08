@@ -1,4 +1,8 @@
+from flags import Flags
+from io import StringIO
 from occurrences import Occurrence
+from os import system
+from os.path import exists
 
 
 class TTBConverter:
@@ -14,7 +18,9 @@ class TTBConverter:
   (8, 9, 0) -> (8 * 9) + 0 = 72
   """
 
-  def __init__(self) -> None:
+  def __init__(self, _flags: Flags, _file: str | None) -> None:
+    self.flags = _flags
+    self.file = _file
     self.conversion_dict = {
       # 'CHAR': (i, j, k)
       #            vvv
@@ -164,7 +170,7 @@ class TTBConverter:
 
     return occurences
 
-  def translate(self, _text: list[Occurrence], _fancy = True):
+  def translate(self, _text: list[Occurrence], _compact: int | None = None):
     lines: list[str] = []
 
     for i, o in enumerate(_text):
@@ -182,13 +188,76 @@ class TTBConverter:
         exts = ''.join(['+' if extc > 0 else '-' for _ in range(0, extc, 1 if extc > 0 else -1)])
         line = f"{'>' if i < 1 else ">>"}{itrs}[<{incs}>-]<{exts}{''.join(['.' for _ in range(oc)])}"
 
-        if _fancy:
+        if _compact is None:
           # Calculating spaces needed to make all the `=`s line up in the final code.
           spaces = ''.join([' ' for _ in range(0, (self.MAX_LINE_LEN - len(cc)) - len(line))])
           lines.append(f"{line}{spaces} {cc} = {value}")
 
-        else:
-          lines.append(f"{line}")
+        else: lines.append(f"{line}")
 
-      except KeyError: raise Exception(f"unknown character: '{c}' ({ord(c)}).")
-    return f"{'\n' if _fancy else ''}".join(lines)
+      except KeyError: print(f"could not translate character: '{c}' ({ord(c)}).")
+
+    final = f'{'\n' if _compact is None else ''}'.join(lines)
+    if _compact is None: return final
+    else:
+      final_with_newlines = StringIO()
+
+      for i in range(0, len(final)-1): final_with_newlines.write('\n' if i % _compact == 0 else final[i])
+      return final_with_newlines.getvalue()
+
+  def write_out(self, _output: str, _outpath: str) -> None:
+    with open(_outpath, 'w' if exists(_outpath) else 'x', encoding="utf-8") as out: out.write(_output)
+
+  def shell_mode(self) -> None:
+    """ Run when no file is given through the command line. """
+
+    try:
+      text = ''
+
+      print("Type `!help` for commands. `!exit` to exit.\n")
+      while True:
+        text = input("~ ")
+
+        if text[0] == '!':
+          match text[1:]:
+            case "help":
+              print("""
+!help  - Display this list of commands.
+!clear - Clear the terminal.
+!exit  - Exit the program.
+""")
+            case "clear": system("clear")
+            case "exit": break
+            case cmd: print("'%s' is not a command." %cmd)
+
+          continue  # Continue after every command so we don't translate `!<cmd>`.
+
+        print(self.translate(self.parse(text)))
+
+      if self.flags.out is not None: self.write_out(text, self.flags.out)
+
+    except KeyboardInterrupt:
+      if self.flags.out is not None: self.write_out(text, self.flags.out)
+
+  def convert_file(self) -> None:
+    if self.file is not None:
+      # Set output file to file we're converting but with `.bf` if it's None.
+      out = self.file if self.flags.out is None else self.flags.out
+
+      # Open given file and translate it, storing the translation for later.
+      with open(self.file, 'r') as file:
+        content = file.read()
+        translated_content = self.translate(self.parse(content))
+        file.close()
+
+      # Get file path without extension at the end.
+      pathwe = ''
+      extra_chars = 0
+      for c in out[::-1]:
+        extra_chars += 1
+        if c == '.': break
+
+      pathwe = out[:len(out)-extra_chars]
+      translated_file = "%s.bf" %pathwe
+
+      self.write_out(translated_content, translated_file)
