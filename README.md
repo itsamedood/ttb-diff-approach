@@ -13,6 +13,19 @@
 >> TTBDA
 >> >>++++[<++++++++>-]<..                    Space = 32
 >> ```
+>>
+> It can also produce a compact format (`--compact=<int>`) if you don't want the comments.
+>> ```bf
+>> >+++++[<+++++++>-]<.>>++++[<++++++++>-]<.>>+++++[<
+>> +++++++++++++++++>-]<-..>>++++++[<+++++++++++>-]<.
+>> >>++++[<++++++++>-]<.>>++++[<++++++++++>-]<.>>++++
+>> +[<+++++++++++++++++>-]<-.>>++++++++++[<++++++++++
+>> >-]<+.>>++++++++++[<++++++++++++>-]<.>>++++++++++[
+>> <+++++++++++>-]<++++++.>>++++[<++++++++>-]<.
+>> ```
+>
+> You can have all the code one 1 line if you want by specifying `compact` as `0`.
+>> Check [test/gitignore.bf](test/gitignore.bf) for an example.
 
 ---
 
