@@ -15,7 +15,7 @@ Flags:
   --out=<str>     | Path to file to write output to.
 """
 
-  def __init__(self, _argv) -> None:
+  def __init__(self, _argv: list[str]) -> None:
     flags = [a[2:] for a in _argv if a [:2] == "--"]  # Array of flags without `--`.
 
     for flag in flags:

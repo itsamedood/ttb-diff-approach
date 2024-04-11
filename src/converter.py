@@ -193,7 +193,7 @@ class TTBConverter:
           spaces = ''.join([' ' for _ in range(0, (self.MAX_LINE_LEN - len(cc)) - len(line))])
           lines.append(f"{line}{spaces} {cc} = {value}")
 
-        else: lines.append(f"{line}")
+        else: lines.append(line)
 
       except KeyError: print(f"could not translate character: '{c}' ({ord(c)}).")
 
@@ -202,7 +202,10 @@ class TTBConverter:
     else:
       final_with_newlines = StringIO()
 
-      for i in range(0, len(final)-1): final_with_newlines.write('\n' if i % _compact == 0 else final[i])
+      for i in range(0, len(final)):
+        if i % _compact == 0 and i > 0: final_with_newlines.write('\n')
+        final_with_newlines.write(final[i])
+
       return final_with_newlines.getvalue()
 
   def write_out(self, _output: str, _outpath: str) -> None:
@@ -247,7 +250,7 @@ class TTBConverter:
       # Open given file and translate it, storing the translation for later.
       with open(self.file, 'r') as file:
         content = file.read()
-        translated_content = self.translate(self.parse(content))
+        translated_content = self.translate(self.parse(content), self.flags.compact)
         file.close()
 
       # Get file path without extension at the end.
