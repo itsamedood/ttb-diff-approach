@@ -203,7 +203,7 @@ class TTBConverter:
       final_with_newlines = StringIO()
 
       for i in range(0, len(final)):
-        if i % _compact == 0 and i > 0: final_with_newlines.write('\n')
+        if not _compact == 0 and i % _compact == 0 and i > 0: final_with_newlines.write('\n')
         final_with_newlines.write(final[i])
 
       return final_with_newlines.getvalue()
@@ -248,7 +248,7 @@ class TTBConverter:
       out = self.file if self.flags.out is None else self.flags.out
 
       # Open given file and translate it, storing the translation for later.
-      with open(self.file, 'r') as file:
+      with open(self.file, 'r', encoding="utf-8") as file:
         content = file.read()
         translated_content = self.translate(self.parse(content), self.flags.compact)
         file.close()
