@@ -214,9 +214,9 @@ class TTBConverter:
   def shell_mode(self) -> None:
     """ Run when no file is given through the command line. """
 
-    try:
-      text = ''
+    text = ''
 
+    try:
       print("Type `!help` for commands. `!exit` to exit.\n")
       while True:
         text = input("~ ")
